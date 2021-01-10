@@ -1,6 +1,9 @@
 target = ../pylib.so
 object = \
-  reorder__ijk_kji.f90
+  calc__grad2d.f90 \
+  calc__curl2d.f90 \
+  reorder__ijk_kji.f90 \
+  calc__laplacian.f90
 
 #FC = ifort
 FC = gfortran
