@@ -2,6 +2,7 @@ target = ../pylib.so
 object = \
   calc__grad2d.f90 \
   calc__curl2d.f90 \
+  store__ingrid3d.f90 \
   reorder__ijk_kji.f90 \
   calc__laplacian.f90
 
