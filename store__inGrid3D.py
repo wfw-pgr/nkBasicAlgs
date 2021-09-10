@@ -29,8 +29,8 @@ def store__inGrid3D( Data=None, x1MinMaxNum=None, x2MinMaxNum=None, x3MinMaxNum=
     nData     = Data.shape[0]
     nCmp      = Data.shape[1]
     dx        = ( x1MinMaxNum[1] - x1MinMaxNum[0] ) / float( x1MinMaxNum[2] - 1 )
-    dy        = ( x1MinMaxNum[1] - x1MinMaxNum[0] ) / float( x1MinMaxNum[2] - 1 )
-    dz        = ( x1MinMaxNum[1] - x1MinMaxNum[0] ) / float( x1MinMaxNum[2] - 1 )
+    dy        = ( x2MinMaxNum[1] - x2MinMaxNum[0] ) / float( x2MinMaxNum[2] - 1 )
+    dz        = ( x3MinMaxNum[1] - x3MinMaxNum[0] ) / float( x3MinMaxNum[2] - 1 )
     delta     = np.array( [ dx, dy, dz ] )
     xyzRange  = [ [ x1MinMaxNum[0], x2MinMaxNum[0], x3MinMaxNum[0] ], \
                   [ x1MinMaxNum[1], x2MinMaxNum[1], x3MinMaxNum[1] ]  ]
@@ -83,8 +83,8 @@ if ( __name__=='__main__' ):
 
     import nkUtilities.equiSpaceGrid as esg
     x1MinMaxNum = [ 0.0, 1.0, 101 ]
-    x2MinMaxNum = [ 0.0, 1.0, 101 ]
-    x3MinMaxNum = [ 0.0, 1.0, 101 ]
+    x2MinMaxNum = [ 0.0, 1.0,  81 ]
+    x3MinMaxNum = [ 0.0, 1.0,  31 ]
     radius      = 0.8
     ret         = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
                                      x3MinMaxNum=x3MinMaxNum, returnType = "point" )
