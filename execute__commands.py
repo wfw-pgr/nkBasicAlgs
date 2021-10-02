@@ -26,7 +26,7 @@ def execute__commands( commands=None, shell=False ):
 
         for cmd in commands:
             print( cmd )
-            subprocessl.call( cmd, shell=True )
+            subprocess.call( cmd, shell=True )
         
     else:
         for cmd in commands:

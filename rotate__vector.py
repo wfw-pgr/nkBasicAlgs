@@ -5,7 +5,8 @@ import numpy as np
 # ===  rotate vector                                    === #
 # ========================================================= #
 
-def rotate__vector( points=None, theta=0.0, nvec=[0,0,1], degree=True ):
+def rotate__vector( points=None, theta=0.0, nvec=[0,0,1], degree=True, \
+                    round_digit=14 ):
 
     # -- points :: np.array [ nPoints, 3 ] or np.array [ nPoints, 2 ]
     
@@ -27,8 +28,8 @@ def rotate__vector( points=None, theta=0.0, nvec=[0,0,1], degree=True ):
     # --- [2] 2D case                               --- #
     # ------------------------------------------------- #
     if ( points.shape[1] == 2 ):
-        cos  = np.cos( theta )
-        sin  = np.sin( theta )
+        cos  = round( np.cos( theta ), round_digit )
+        sin  = round( np.sin( theta ), round_digit )
         Rmat = np.array( [ [ cos, -sin ], [ sin, cos ] ] )
         ret  = np.transpose( np.dot( Rmat, np.transpose( points ) ) )
         ret  = np.dot( points, np.transpose( Rmat) )
@@ -40,8 +41,8 @@ def rotate__vector( points=None, theta=0.0, nvec=[0,0,1], degree=True ):
     #  - R(th) r = r costh + n (n.r) ( 1 - costh )  + ( n x r ) sinth - #
     if ( points.shape[1] == 3 ):
         nrep = np.repeat( nvec[None,:], points.shape[0], axis=0 )
-        cos  = np.cos( theta )
-        sin  = np.sin( theta )
+        cos  = round( np.cos( theta ), round_digit )
+        sin  = round( np.sin( theta ), round_digit )
         rcos = points * cos
         ndr  = np.sum( nrep*points, axis=1 )
         ndrn = ( 1.0-cos ) * ( np.repeat( ndr[:,None], 3, axis=1 ) * nrep )
