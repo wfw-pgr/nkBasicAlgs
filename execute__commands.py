@@ -12,7 +12,8 @@ def execute__commands( commands=None, shell=False ):
     # ------------------------------------------------- #
     if   ( commands is None ): sys.exit( "[execute__commands.py] commands == ???" )
     if   ( type(commands) is str  ):
-        commands = [ commands ]
+        commands  = [ commands ]
+        nCommands = len( commands )
     elif ( type(commands) is list ):
         pass
     else:
@@ -22,6 +23,8 @@ def execute__commands( commands=None, shell=False ):
     # --- [2] execute commands                      --- #
     # ------------------------------------------------- #
 
+    if ( shell is bool ):
+    
     if ( shell == True ):
 
         for cmd in commands:
