@@ -129,9 +129,9 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
     for cmd in commands:
         print( cmd )
         if ( shell[ik] ):
-            ret = subprocess.run( cmd, shell=True, capture_output=True )
+            ret = subprocess.run( cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         else:
-            ret = subprocess.run( cmd.split(), capture_output=True )
+            ret = subprocess.run( cmd.split(),     stdout=subprocess.PIPE, stderr=subprocess.PIPE )
             
         if   ( ret.returncode ==  0 ):
             print( ret.stdout.decode() )
