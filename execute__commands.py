@@ -33,7 +33,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
             print( "[execute__commands.py] error_handling == environ, however can't find PYTHON_ERROR_HANDLING_MODE" )
             sys.exit()
 
-        if ( error_handling.lower() in ["ignore","alert","stop","wait",] ):
+        if ( error_handling.lower() in ["ignore","alert","stop","wait","skip"] ):
             pass
         else:
             print( "[execute__commands.py] unknown error_handling :: {0}".format( error_handling ) )
@@ -79,7 +79,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                         pass
                     else:
                         handle__error( error_handling=error_handling, cmd=cmd, \
-                                       operands=operands, nofile=hfile )
+                                       operands=operands, nofile=hfile, commands=commands )
                 
             if ( command in [ "mv", "cp" ] ):
 
@@ -96,7 +96,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                         pass
                     else:
                         handle__error( error_handling=error_handling, cmd=cmd, \
-                                       operands=operands, nofile=hfile )
+                                       operands=operands, nofile=hfile, commands=commands )
 
                 if ( os.path.exists( dst ) ):
                     if ( os.path.isdir( dst ) ):
@@ -105,7 +105,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                         path_split = dst.split( "/" )
                         if   ( len( path_split ) == 0 ):
                             handle__error( error_handling=error_handling, cmd=cmd, \
-                                           operands=operands, nofile=file_dir )
+                                           operands=operands, nofile=file_dir, commands=commands )
                         elif ( len( path_split ) == 1 ):
                             pass
                         elif ( len( path_split ) >= 2 ):
@@ -114,15 +114,13 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                                 pass
                             else:
                                 handle__error( error_handling=error_handling, cmd=cmd, \
-                                               operands=operands, nofile=file_dir )
+                                               operands=operands, nofile=file_dir, commands=commands )
                 else:
                     print( dst )
                     if ( dst[-1] == "/" ):
                         handle__error( error_handling=error_handling, cmd=cmd, \
-                                       operands=operands, nofile=dst )
-                            
+                                       operands=operands, nofile=dst, commands=commands )
                         
-        
     # ------------------------------------------------- #
     # --- [3] execution of commands                 --- #
     # ------------------------------------------------- #
@@ -150,13 +148,13 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
 # ===  handle__error                                    === #
 # ========================================================= #
 
-def handle__error( error_handling=None, cmd=None, operands=None, nofile=None ):
+def handle__error( error_handling=None, cmd=None, operands=None, nofile=None, commands=None ):
 
     # ------------------------------------------------- #
     # --- [1] error handling according to mode      --- #
     # ------------------------------------------------- #
     nop = True
-    if ( error_handling.lower() in [ "alert", "wait", "stop", "ignore" ] ):
+    if ( error_handling.lower() in [ "alert", "wait", "stop", "ignore", "skip" ] ):
         colorprint( "[execute__commands.py] cannot find path. [ALERT] ", color="red" )
         if ( cmd      is not None ):
             print( "[execute__commands.py] command     :: {0}".format( cmd   ) )
@@ -168,6 +166,13 @@ def handle__error( error_handling=None, cmd=None, operands=None, nofile=None ):
 
     if ( error_handling.lower() in [ "ignore" ] ):
         print( "[execute__commands.py] ignore error catch" )
+        return()
+
+    if ( error_handling.lower() in [ "skip"] ):
+        try:
+            commands.remove( cmd )
+        except:
+            pass
         return()
         
     if ( error_handling.lower() in [ "wait" ] ):
@@ -234,5 +239,5 @@ if ( __name__=="__main__" ):
     execute__commands( commands=commands )
 
     commands = [ "mv test/file04 test/dir01/", "cp test/file05 test/dir05/", "cp test/file06 test/dir04/" ]
-    execute__commands( commands=commands )
+    execute__commands( commands=commands, error_handling="skip" )
     
