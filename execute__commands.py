@@ -59,6 +59,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
     # ------------------------------------------------- #
     # --- [3] file confirmation                     --- #
     # ------------------------------------------------- #
+    ex_commands = [ cmd for cmd in commands ]
     if ( confirm_file ):
         for ik,cmd in enumerate(commands):
 
@@ -79,7 +80,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                         pass
                     else:
                         handle__error( error_handling=error_handling, cmd=cmd, \
-                                       operands=operands, nofile=hfile, commands=commands )
+                                       operands=operands, nofile=hfile, commands=ex_commands )
                 
             if ( command in [ "mv", "cp" ] ):
 
@@ -96,7 +97,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                         pass
                     else:
                         handle__error( error_handling=error_handling, cmd=cmd, \
-                                       operands=operands, nofile=hfile, commands=commands )
+                                       operands=operands, nofile=hfile, commands=ex_commands )
 
                 if ( os.path.exists( dst ) ):
                     if ( os.path.isdir( dst ) ):
@@ -105,7 +106,7 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                         path_split = dst.split( "/" )
                         if   ( len( path_split ) == 0 ):
                             handle__error( error_handling=error_handling, cmd=cmd, \
-                                           operands=operands, nofile=file_dir, commands=commands )
+                                           operands=operands, nofile=file_dir, commands=ex_commands )
                         elif ( len( path_split ) == 1 ):
                             pass
                         elif ( len( path_split ) >= 2 ):
@@ -114,17 +115,17 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
                                 pass
                             else:
                                 handle__error( error_handling=error_handling, cmd=cmd, \
-                                               operands=operands, nofile=file_dir, commands=commands )
+                                               operands=operands, nofile=file_dir, commands=ex_commands )
                 else:
                     print( dst )
                     if ( dst[-1] == "/" ):
                         handle__error( error_handling=error_handling, cmd=cmd, \
-                                       operands=operands, nofile=dst, commands=commands )
+                                       operands=operands, nofile=dst, commands=ex_commands )
                         
     # ------------------------------------------------- #
     # --- [3] execution of commands                 --- #
     # ------------------------------------------------- #
-    for cmd in commands:
+    for cmd in ex_commands:
         print( cmd )
         if ( shell[ik] ):
             ret = subprocess.run( cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
@@ -132,7 +133,8 @@ def execute__commands( commands=None, shell=False, confirm_file=True, error_hand
             ret = subprocess.run( cmd.split(),     stdout=subprocess.PIPE, stderr=subprocess.PIPE )
             
         if   ( ret.returncode ==  0 ):
-            print( ret.stdout.decode() )
+            if ( len( ret.stdout.decode() ) > 0 ):
+                print( ( ret.stdout.decode() ).strip() )
 
         elif ( ret.returncode !=  0 ):
             colorprint( "[execute__commands.py] returncode == -1. [ERROR]", color="red" )
@@ -164,15 +166,15 @@ def handle__error( error_handling=None, cmd=None, operands=None, nofile=None, co
             print( "[execute__commands.py] cannot find :: {0}".format( nofile ) )
         nop = False
 
-    if ( error_handling.lower() in [ "ignore" ] ):
-        print( "[execute__commands.py] ignore error catch" )
-        return()
-
     if ( error_handling.lower() in [ "skip"] ):
         try:
             commands.remove( cmd )
         except:
             pass
+        return()
+
+    if ( error_handling.lower() in [ "ignore" ] ):
+        print( "[execute__commands.py] ignore error catch" )
         return()
         
     if ( error_handling.lower() in [ "wait" ] ):
@@ -235,9 +237,10 @@ if ( __name__=="__main__" ):
     commands = [ "touch test/file01"  , "touch test/file02"  , "touch test/file03", "touch test/file05",    ]
     execute__commands( commands=commands )
     
+    commands = [ "mv test/file04 test/dir01/", "cp test/file05 test/dir05/", "cp test/file06 test/dir04/" ]
+    execute__commands( commands=commands, error_handling="skip" )
+
     commands = [ "cp test/file01 test/dir01/", "cp test/file02 test/dir02/", "cp test/file03 test/dir03/" ]
     execute__commands( commands=commands )
 
-    commands = [ "mv test/file04 test/dir01/", "cp test/file05 test/dir05/", "cp test/file06 test/dir04/" ]
-    execute__commands( commands=commands, error_handling="skip" )
     
