@@ -5,7 +5,13 @@ import numpy as np
 # ===  Robust Reciprocal Number                         === #
 # ========================================================= #
 
-def robustInv( Data, Flag__positive=False ):
+def robustInv( Data=None, Flag__positive=False ):
+
+    # ------------------------------------------------- #
+    # --- [0] arguments                             --- #
+    # ------------------------------------------------- #
+    if ( Data is None ): sys.exit( "[robustInv.py] Data == ???" )
+
     
     # ---------------------------------------- #
     # ---  [1] integer case                --- #

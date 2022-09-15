@@ -51,15 +51,15 @@ def structurize__grid( Data=None, inpFile=None, DataType="point", coordinate="xy
     dx          = np.average( np.diff( xAxis ) )
     dy          = np.average( np.diff( yAxis ) )
     dz          = np.average( np.diff( zAxis ) )
-    xdigit_     = - np.log10( ( dx * 10** ( (-1.0) * digit ) ) )
-    ydigit_     = - np.log10( ( dy * 10** ( (-1.0) * digit ) ) )
-    zdigit_     = - np.log10( ( dz * 10** ( (-1.0) * digit ) ) )
-    xAxis       = np.sort( np.array( list( set( np.round( Data_[:,x_], decimals=digit ) ) ) ) )
-    yAxis       = np.sort( np.array( list( set( np.round( Data_[:,y_], decimals=digit ) ) ) ) )
-    zAxis       = np.sort( np.array( list( set( np.round( Data_[:,z_], decimals=digit ) ) ) ) )
-    dx          = ( np.diff( xAxis ) )[0]
-    dy          = ( np.diff( yAxis ) )[0]
-    dz          = ( np.diff( zAxis ) )[0]
+    xdigit      = round( - np.log10( ( dx * 10** ( (-1.0) * digit ) ) ) )
+    ydigit      = round( - np.log10( ( dy * 10** ( (-1.0) * digit ) ) ) )
+    zdigit      = round( - np.log10( ( dz * 10** ( (-1.0) * digit ) ) ) )
+    xAxis       = np.sort( np.array( list( set( np.round( Data_[:,x_], decimals=xdigit ) ) ) ) )
+    yAxis       = np.sort( np.array( list( set( np.round( Data_[:,y_], decimals=ydigit ) ) ) ) )
+    zAxis       = np.sort( np.array( list( set( np.round( Data_[:,z_], decimals=zdigit ) ) ) ) )
+    dx          = np.round( ( np.diff( xAxis ) )[0], decimals=xdigit )
+    dy          = np.round( ( np.diff( yAxis ) )[0], decimals=ydigit )
+    dz          = np.round( ( np.diff( zAxis ) )[0], decimals=zdigit )
     
     # ------------------------------------------------- #
     # --- [4] identify nGrid                        --- #
