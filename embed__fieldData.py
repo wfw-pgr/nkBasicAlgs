@@ -10,7 +10,6 @@ import nkBasicAlgs.structurize__grid as stg
 
 def embed__fieldData( embed=None, target=None, coordinate="3d", digit=2, out_of_boundary="ignore" ):
 
-    
     # ------------------------------------------------- #
     # --- [1] arguments                             --- #
     # ------------------------------------------------- #
@@ -23,9 +22,9 @@ def embed__fieldData( embed=None, target=None, coordinate="3d", digit=2, out_of_
     # --- [2] inquire grid information              --- #
     # ------------------------------------------------- #
     gi_target = stg.structurize__grid( Data=target_, returnType="dict", \
-                                             coordinate=coordinate, digit=digit )
+                                       coordinate=coordinate, digit=digit )
     gi_embed  = stg.structurize__grid( Data=embed_ , returnType="dict", \
-                                             coordinate=coordinate, digit=digit )
+                                       coordinate=coordinate, digit=digit )
     embed_          = gi_embed ["Data"]
     target_         = gi_target["Data"]
     if ( ( gi_embed["dx"] != gi_target["dx"] ) or \
@@ -37,16 +36,31 @@ def embed__fieldData( embed=None, target=None, coordinate="3d", digit=2, out_of_
         print( "[embed__fieldData.py] target :: (dx,dy,dz) :: ( {}, {}, {} )"\
                .format( gi_target["dx"], gi_target["dy"], gi_target["dz"] ) )
         sys.exit()
+
+    if ( gi_embed["dx"] == 0.0 ):
+        dxInv = 0.0
+    else:
+        dxInv = 1.0 / gi_embed["dx"]
+
+    if ( gi_embed["dy"] == 0.0 ):
+        dyInv = 0.0
+    else:
+        dyInv = 1.0 / gi_embed["dy"]
+
+    if ( gi_embed["dz"] == 0.0 ):
+        dzInv = 0.0
+    else:
+        dzInv = 1.0 / gi_embed["dz"]
         
     # ------------------------------------------------- #
     # --- [3] search index                          --- #
     # ------------------------------------------------- #
-    iMin_t  = round( ( ( gi_embed ["xMin"] - gi_target["xMin"] ) ) / ( gi_embed["dx"] ) )
-    iMax_t  = round( ( ( gi_embed ["xMax"] - gi_target["xMin"] ) ) / ( gi_embed["dx"] ) )
-    jMin_t  = round( ( ( gi_embed ["yMin"] - gi_target["yMin"] ) ) / ( gi_embed["dy"] ) )
-    jMax_t  = round( ( ( gi_embed ["yMax"] - gi_target["yMin"] ) ) / ( gi_embed["dy"] ) )
-    kMin_t  = round( ( ( gi_embed ["zMin"] - gi_target["zMin"] ) ) / ( gi_embed["dz"] ) )
-    kMax_t  = round( ( ( gi_embed ["zMax"] - gi_target["zMin"] ) ) / ( gi_embed["dz"] ) )
+    iMin_t  = round( ( ( gi_embed ["xMin"] - gi_target["xMin"] ) ) * dxInv )
+    iMax_t  = round( ( ( gi_embed ["xMax"] - gi_target["xMin"] ) ) * dxInv )
+    jMin_t  = round( ( ( gi_embed ["yMin"] - gi_target["yMin"] ) ) * dyInv )
+    jMax_t  = round( ( ( gi_embed ["yMax"] - gi_target["yMin"] ) ) * dyInv )
+    kMin_t  = round( ( ( gi_embed ["zMin"] - gi_target["zMin"] ) ) * dzInv )
+    kMax_t  = round( ( ( gi_embed ["zMax"] - gi_target["zMin"] ) ) * dzInv )
     iMin_e  = max( 0, (0-iMin_t) )
     jMin_e  = max( 0, (0-iMin_t) )
     kMin_e  = max( 0, (0-iMin_t) )
@@ -81,7 +95,7 @@ def embed__fieldData( embed=None, target=None, coordinate="3d", digit=2, out_of_
     # --- [3] substitution                          --- #
     # ------------------------------------------------- #
     target_[kMin_t:kMax_t+1,jMin_t:jMax_t+1,iMin_t:iMax_t+1,:] = \
-        np.copy( embed_[ iMin_e:iMax_e+1, jMin_e:jMax_e+1, kMin_e:kMax_e+1, : ] )
+        np.copy( embed_[ kMin_e:kMax_e+1, jMin_e:jMax_e+1, iMin_e:iMax_e+1, : ] )
     return( target_ )
 
 
@@ -94,14 +108,49 @@ if ( __name__=="__main__" ):
 
     x_, y_, z_ = 0, 1, 2
 
+    # # ------------------------------------------------- #
+    # # --- [1] example  (3D)                         --- #
+    # # ------------------------------------------------- #
+    # import nkBasicAlgs.robustInv     as inv
+    # import nkUtilities.equiSpaceGrid as esg
+    # x1MinMaxNum = [ -1.0, 1.0, 21 ]
+    # x2MinMaxNum = [ -1.0, 1.0, 21 ]
+    # x3MinMaxNum = [ -1.0, 1.0, 21 ]
+    # coord       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+    #                                  x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+    # radii       = np.sqrt( coord[:,x_]**2 + coord[:,y_]**2 + coord[:,z_]**2 )
+    # rInv        = inv.robustInv( radii )
+    # vector      = coord * np.repeat( rInv[:,None], 3, axis=1 ) * 0.0
+    # target      = np.concatenate( [coord,vector], axis=1 )
+
+    # x1MinMaxNum = [  0.0, 1.1, 12 ]
+    # x2MinMaxNum = [  0.0, 1.1, 12 ]
+    # x3MinMaxNum = [  0.0, 1.1, 12 ]
+    # coord       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
+    #                                  x3MinMaxNum=x3MinMaxNum, returnType = "point" )
+    # radii       = np.sqrt( coord[:,x_]**2 + coord[:,y_]**2 + coord[:,z_]**2 )
+    # rInv        = inv.robustInv( radii )
+    # vector      = coord * np.repeat( rInv[:,None], 3, axis=1 )
+    # embed       = np.concatenate( [coord,vector], axis=1 )
+    
+    # # ------------------------------------------------- #
+    # # --- [2] embed                                 --- #
+    # # ------------------------------------------------- #
+    # ret         = embed__fieldData( embed=embed, target=target, coordinate="3d" )
+    # print( ret.shape )
+
+    # import nkVTKRoutines.convert__vtkStructuredGrid as cvs
+    # cvs.convert__vtkStructuredGrid( Data=ret, outFile="out.vts" )
+
+
     # ------------------------------------------------- #
-    # --- [1] example                               --- #
+    # --- [1] example  (2D)                         --- #
     # ------------------------------------------------- #
     import nkBasicAlgs.robustInv     as inv
     import nkUtilities.equiSpaceGrid as esg
     x1MinMaxNum = [ -1.0, 1.0, 21 ]
     x2MinMaxNum = [ -1.0, 1.0, 21 ]
-    x3MinMaxNum = [ -1.0, 1.0, 21 ]
+    x3MinMaxNum = [  0.0, 0.0,  1 ]
     coord       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
                                      x3MinMaxNum=x3MinMaxNum, returnType = "point" )
     radii       = np.sqrt( coord[:,x_]**2 + coord[:,y_]**2 + coord[:,z_]**2 )
@@ -111,7 +160,7 @@ if ( __name__=="__main__" ):
 
     x1MinMaxNum = [  0.0, 1.1, 12 ]
     x2MinMaxNum = [  0.0, 1.1, 12 ]
-    x3MinMaxNum = [  0.0, 1.1, 12 ]
+    x3MinMaxNum = [  0.0, 0.0,  1 ]
     coord       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
                                      x3MinMaxNum=x3MinMaxNum, returnType = "point" )
     radii       = np.sqrt( coord[:,x_]**2 + coord[:,y_]**2 + coord[:,z_]**2 )
@@ -123,7 +172,9 @@ if ( __name__=="__main__" ):
     # --- [2] embed                                 --- #
     # ------------------------------------------------- #
     ret         = embed__fieldData( embed=embed, target=target, coordinate="3d" )
-    print( ret.shape )
+    import nkUtilities.save__pointFile as spf
+    outFile     = "dat/out.dat"
+    spf.save__pointFile( outFile=outFile, Data=ret )
 
     import nkVTKRoutines.convert__vtkStructuredGrid as cvs
     cvs.convert__vtkStructuredGrid( Data=ret, outFile="out.vts" )
