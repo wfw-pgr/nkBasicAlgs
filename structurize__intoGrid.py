@@ -84,9 +84,9 @@ def prepare__range( x1MinMaxNum=None, xMin=None, xMax=None, LI=None, Data=None, 
     # ------------------------------------------------- #
     if ( x1MinMaxNum is None ):
         if ( ( xMin is None ) or ( xMax is None ) ):
-            xMin, xMax  = np.min( Data_[:,idx_] ), np.max( Data_[:,idx_] )
+            xMin, xMax  = np.min( Data[:,idx_] ), np.max( Data[:,idx_] )
         if ( LI is None ):
-            xAxis = np.sort( np.array( list( set( Data_[:,idx_] ) ) ) )
+            xAxis = np.sort( np.array( list( set( Data[:,idx_] ) ) ) )
             LI    = xAxis.shape[0]
             print( xAxis, LI )
         else:
