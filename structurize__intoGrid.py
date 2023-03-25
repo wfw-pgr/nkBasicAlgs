@@ -108,7 +108,7 @@ def prepare__range( x1MinMaxNum=None, xMin=None, xMax=None, LI=None, Data=None, 
             dx = 0.0
             LI = 1
         else:
-            dx = didx_ / x1MinMaxNum[num_]
+            dx = dx_ / x1MinMaxNum[num_]
             LI = x1MinMaxNum[num_]
 
     # ------------------------------------------------- #
