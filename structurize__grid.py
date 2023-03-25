@@ -8,7 +8,8 @@ import nkUtilities.load__pointFile as lpf
 # ========================================================= #
 
 def structurize__grid( Data=None, inpFile=None, DataType="point", coordinate="xyz", \
-                       digit=5  , reshape=True, returnType="Data" ):
+                       digit=5  , reshape=True, returnType="Data", \
+                       xMin=None, yMin=None, zMin=None, xMax=None, yMax=None, zMax=None,  ):
 
     x_, y_, z_ = 0, 1, 2
     
@@ -38,9 +39,12 @@ def structurize__grid( Data=None, inpFile=None, DataType="point", coordinate="xy
     # ------------------------------------------------- #
     nData       = Data_.shape[0]
     nComponents = Data_.shape[1]
-    xMin, xMax  = np.min( Data_[:,x_] ), np.max( Data_[:,x_] )
-    yMin, yMax  = np.min( Data_[:,y_] ), np.max( Data_[:,y_] )
-    zMin, zMax  = np.min( Data_[:,z_]) , np.max( Data_[:,z_] )
+    if ( ( xMin is None ) or ( xMax is None ) ):
+        xMin, xMax  = np.min( Data_[:,x_] ), np.max( Data_[:,x_] )
+    if ( ( yMin is None ) or ( yMax is None ) ):
+        yMin, yMax  = np.min( Data_[:,y_] ), np.max( Data_[:,y_] )
+    if ( ( zMin is None ) or ( zMax is None ) ):
+        zMin, zMax  = np.min( Data_[:,z_]) , np.max( Data_[:,z_] )
     
     # ------------------------------------------------- #
     # --- [3] identify Axis                         --- #
@@ -135,12 +139,10 @@ if ( __name__=="__main__" ):
     coord       = esg.equiSpaceGrid( x1MinMaxNum=x1MinMaxNum, x2MinMaxNum=x2MinMaxNum, \
                                      x3MinMaxNum=x3MinMaxNum, returnType = "point" )
     field       = np.sqrt( np.sum( coord**2, axis=1 ) )
-    Data        = np.concatenate( [coord, field[:,None]], axis=1 )
+    Data        = np.concatenate( [coord, field[:,None], 2*field[:,None] ], axis=1 )
     
     # ------------------------------------------------- #
     # --- [2] call function                         --- #
     # ------------------------------------------------- #
     ret = structurize__grid( Data=Data )
     print( ret.shape )
-
-    
