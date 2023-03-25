@@ -49,18 +49,18 @@ def structurize__intoGrid( Data=None, inpFile=None, digit=5, \
     i_index = np.array( np.round( ( Data_[:,x_] - x1MinMaxNum[min_] ) / dx ), dtype=np.int64 )
     j_index = np.array( np.round( ( Data_[:,y_] - x2MinMaxNum[min_] ) / dy ), dtype=np.int64 )
     k_index = np.array( np.round( ( Data_[:,z_] - x3MinMaxNum[min_] ) / dz ), dtype=np.int64 )
-    t_index = np.concatenate( [i_index[:,np.newaxis],j_index[:,np.newaxis],k_index[:,np.newaxis],], axis=1 )
+    # t_index = np.concatenate( [i_index[:,np.newaxis],j_index[:,np.newaxis],k_index[:,np.newaxis],], axis=1 )
     i_overf = np.where( ( i_index > LI-1 ) | ( i_index < 0 ), True, False )
     j_overf = np.where( ( j_index > LJ-1 ) | ( j_index < 0 ), True, False )
     k_overf = np.where( ( k_index > LK-1 ) | ( k_index < 0 ), True, False )
-    t_overf = np.concatenate( [i_overf[:,np.newaxis],j_overf[:,np.newaxis],k_overf[:,np.newaxis],], axis=1 )
+    # t_overf = np.concatenate( [i_overf[:,np.newaxis],j_overf[:,np.newaxis],k_overf[:,np.newaxis],], axis=1 )
     i_index[ i_overf ] = 0
     j_index[ j_overf ] = 0
     k_index[ k_overf ] = 0
     
     nField                                = Data_.shape[1]-3
     field                                 = np.zeros( (LK,LJ,LI,nField) )
-    field[ i_index, j_index, k_index, : ] = Data_[:,3:]
+    field[ k_index, j_index, i_index, : ] = Data_[:,3:]
     ret                                   = np.concatenate( [coord,field], axis=3 )
     return( ret )
 
